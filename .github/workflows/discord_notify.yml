@@ -4,12 +4,12 @@ on:
   pull_request:
     types: [opened, reopened, ready_for_review, closed]
   workflow_run:
-    workflows: ["CI/CD Pipeline"]
     types: [completed]
 
 jobs:
   notify-discord:
     runs-on: ubuntu-latest
+
     steps:
       - name: Notify Development Channel (Pull Requests)
         if: github.event_name == 'pull_request'
@@ -36,9 +36,15 @@ jobs:
             - [Ver Detalles](${{ github.event.workflow_run.html_url }})
             - **Ejecutado por**: ${{ github.actor }}
 
+      - name: Print Workflow Run Event
+        if: github.event_name == 'workflow_run'
+        run: echo "${{ toJson(github.event) }}"
+
+      
+
       - name: Notify General Channel (Opcional)
         if: github.event_name == 'pull_request' || github.event_name == 'workflow_run'
         uses: appleboy/discord-action@v1.2.0
         with:
           webhook_url: ${{ secrets.DISCORD_GENERAL_WEBHOOK }}
-          message: "¡Hola equipo! Se ha realizado una nueva acción en el repositorio." 
+          message: "¡Hola equipo! Se ha realizado una nueva acción en el repositorio."
