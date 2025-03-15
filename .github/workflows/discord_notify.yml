@@ -36,7 +36,7 @@ jobs:
             - **Ejecutado por**: ${{ github.actor }}
 
       - name: Notify General Channel (Opcional)
-        if: github.event_name == 'pull_request' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'skipped')
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_run'
         uses: appleboy/discord-action@v1.2.0
         with:
           webhook_url: ${{ secrets.DISCORD_GENERAL_WEBHOOK }}
