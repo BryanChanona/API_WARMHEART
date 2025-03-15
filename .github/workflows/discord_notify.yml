@@ -1,57 +1,20 @@
-# This is a basic workflow to help you get started with Actions
+name: Discord Notifications
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "develop" branch
-  push:
-    branches: 
-      - CC-api-01
-      - BC-api-01
-
   pull_request:
-    branches: [ "develop" ]
-  
+    types: [opened, reopened, ready_for_review, closed]
+  workflow_run:
+    workflows: ["CI/CD Pipeline"] # Nombre del workflow
+    types: [completed]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  notify-discord:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-# Runs a single command using the runner's shell
-      - name: Send commit message to Discord
-        if: github.event_name == 'push'
-        uses: appleboy/discord-action@v1.2.0
-        with:
-          webhook_url: ${{secrets.URL_DISCORD_COMMIT}}
-          message: "Nuevo commit: ${{ github.event.head_commit.message }} de ${{github.actor}} en la rama ${{github.ref}}"
-      
-
-      - name: Send push message to Discord
-        if: github.event_name == 'push'
-        uses: appleboy/discord-action@v1.2.0
-        with:
-          webhook_url: ${{secrets.URL_DISCORD_PUSH}}
-          message: "Nuevo push de ${{github.actor}} en la rama ${{github.ref}}"
-
-
-      - name: Send pull request message to Discord
+      - name: Notify Development Channel (Pull Requests)
         if: github.event_name == 'pull_request'
         uses: appleboy/discord-action@v1.2.0
         with:
-          webhook_url: ${{secrets.URL_DISCORD_PULL_REQUEST}}
-          message: "Nueva pull request de ${{github.actor}} en la rama ${{github.ref}} hacia ${{github.event.pull_request.base.ref}}"
-      
-
-
