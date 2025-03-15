@@ -4,16 +4,12 @@ on:
   pull_request:
     types: [opened, reopened, ready_for_review, closed]
   workflow_run:
-    workflows: ["CI/CD Pipeline"]
     types: [completed]
 
 jobs:
   notify-discord:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Notify Development Channel (Pull Requests)
         if: github.event_name == 'pull_request'
         uses: appleboy/discord-action@v1.2.0
@@ -40,7 +36,7 @@ jobs:
             - **Ejecutado por**: ${{ github.actor }}
 
       - name: Notify General Channel (Opcional)
-        if: github.event_name == 'pull_request' || github.event_name == 'workflow_run'
+        if: github.event_name == 'pull_request' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'skipped')
         uses: appleboy/discord-action@v1.2.0
         with:
           webhook_url: ${{ secrets.DISCORD_GENERAL_WEBHOOK }}
