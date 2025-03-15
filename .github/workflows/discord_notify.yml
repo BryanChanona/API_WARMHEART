@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, reopened, ready_for_review, closed]
   workflow_run:
-    workflows: ["CI/CD Pipeline"] # Nombre del workflow
+    workflows: ["CI/CD Pipeline"]
     types: [completed]
 
 jobs:
@@ -18,19 +18,19 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: appleboy/discord-action@v1.2.0
         with:
-          webhook_url: ${{ secrets.URL_PRUEBAS_DISCORD}}
+          webhook_url: ${{ secrets.URL_DESARROLLO_DISCORD }}
           message: |
             **Nuevo Evento en Pull Request**
-            -  **Acción**: ${{ github.event.action }}
-            -  **Repositorio**: ${{ github.repository }}
-            -  [Ver PR](${{ github.event.pull_request.html_url }})
-            -  **Autor**: ${{ github.actor }}
+            - **Acción**: ${{ github.event.action }}
+            - **Repositorio**: ${{ github.repository }}
+            - [Ver PR](${{ github.event.pull_request.html_url }})
+            - **Autor**: ${{ github.actor }}
 
       - name: Notify Tests Channel (Workflows)
         if: github.event_name == 'workflow_run'
         uses: appleboy/discord-action@v1.2.0
         with:
-          webhook_url: ${{ secrets.URL_DESARROLLO_DISCORD}}
+          webhook_url: ${{ secrets.URL_PRUEBAS_DISCORD }}
           message: |
             **Resultado de Workflow**
             - **Workflow**: ${{ github.event.workflow_run.name }}
@@ -40,7 +40,8 @@ jobs:
             - **Ejecutado por**: ${{ github.actor }}
 
       - name: Notify General Channel (Opcional)
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_run'
         uses: appleboy/discord-action@v1.2.0
         with:
           webhook_url: ${{ secrets.DISCORD_GENERAL_WEBHOOK }}
-          message: " ¡Hola equipo! Recuerden revisar los PRs y tests."  
+          message: "¡Hola equipo! Se ha realizado una nueva acción en el repositorio."
