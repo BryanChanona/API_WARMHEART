@@ -29,10 +29,8 @@ jobs:
           webhook_url: ${{ secrets.URL_PRUEBAS_DISCORD }}
           message: |
             **Resultado de Workflow**
-            - **Workflow**: ${{ github.event.workflow_run.name }}
-            - **Estado**: ${{ github.event.workflow_run.conclusion }}
-            - **Repositorio**: ${{ github.repository }}
-            - [Ver Detalles](${{ github.event.workflow_run.html_url }})
+            - **Workflow**: ${{ github.workflow }}
+            - **Repositorio**: ${{ github.workflow_ref }}
             - **Ejecutado por**: ${{ github.actor }}
 
       - name: Notify General Channel (Opcional)
