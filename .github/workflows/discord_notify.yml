@@ -4,6 +4,7 @@ on:
   pull_request:
     types: [opened, reopened, ready_for_review, closed]
   workflow_run:
+    workflows: ["CI/CD Pipeline"]
     types: [completed]
 
 jobs:
