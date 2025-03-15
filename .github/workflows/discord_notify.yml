@@ -36,5 +36,22 @@ jobs:
         with:
           webhook_url: ${{secrets.URL_DISCORD_COMMIT}}
           message: "Nuevo commit: ${{ github.event.head_commit.message }} de ${{github.actor}} en la rama ${{github.ref}}"
+      
+
+      - name: Send push message to Discord
+        if: github.event_name == 'push'
+        uses: appleboy/discord-action@v1.2.0
+        with:
+          webhook_url: ${{secrets.URL_DISCORD_PUSH}}
+          message: "Nuevo push de ${{github.actor}} en la rama ${{github.ref}}"
+
+
+      - name: Send pull request message to Discord
+        if: github.event_name == 'pull_request'
+        uses: appleboy/discord-action@v1.2.0
+        with:
+          webhook_url: ${{secrets.URL_DISCORD_PULL_REQUEST}}
+          message: "Nueva pull request de ${{github.actor}} en la rama ${{github.ref}} hacia ${{github.event.pull_request.base.ref}}"
+      
 
 
