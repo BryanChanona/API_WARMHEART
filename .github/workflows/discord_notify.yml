@@ -1,56 +1,46 @@
-# This is a basic workflow to help you get started with Actions
+name: Discord Notifications
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "develop" branch
-  push:
-    branches: 
-      - '*'
-
   pull_request:
-    branches: [ "develop" ]
-  
+    types: [opened, reopened, ready_for_review, closed]
+  workflow_run:
+    workflows: ["CI/CD Pipeline"] # Nombre del workflow
+    types: [completed]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  notify-discord:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-# Runs a single command using the runner's shell
-      - name: Send commit message to Discord
-        if: github.event_name == 'push'
-        uses: appleboy/discord-action@v1.2.0
-        with:
-          webhook_url: ${{secrets.URL_DISCORD_COMMIT}}
-          message: "Nuevo commit: ${{ github.event.head_commit.message }} de ${{github.actor}} en la rama ${{github.ref}}"
-      
-
-      - name: Send push message to Discord
-        if: github.event_name == 'push'
-        uses: appleboy/discord-action@v1.2.0
-        with:
-          webhook_url: ${{secrets.URL_DISCORD_PUSH}}
-          message: "Nuevo push de ${{github.actor}} en la rama ${{github.ref}}"
-
-
-      - name: Send pull request message to Discord
+      - name: Notify Development Channel (Pull Requests)
         if: github.event_name == 'pull_request'
         uses: appleboy/discord-action@v1.2.0
         with:
-          webhook_url: ${{secrets.URL_DISCORD_PULL_REQUEST}}
-          message: "Nueva pull request de ${{github.actor}} en la rama ${{github.ref}} hacia ${{github.event.pull_request.base.ref}}"
-      
+          webhook_url: ${{ secrets.URL_PRUEBAS_DISCORD}}
+          message: |
+            **Nuevo Evento en Pull Request**
+            -  **Acción**: ${{ github.event.action }}
+            -  **Repositorio**: ${{ github.repository }}
+            -  [Ver PR](${{ github.event.pull_request.html_url }})
+            -  **Autor**: ${{ github.actor }}
 
+      - name: Notify Tests Channel (Workflows)
+        if: github.event_name == 'workflow_run'
+        uses: appleboy/discord-action@v1.2.0
+        with:
+          webhook_url: ${{ secrets.URL_DESARROLLO_DISCORD}}
+          message: |
+            **Resultado de Workflow**
+            - **Workflow**: ${{ github.event.workflow_run.name }}
+            - **Estado**: ${{ github.event.workflow_run.conclusion }}
+            - **Repositorio**: ${{ github.repository }}
+            - [Ver Detalles](${{ github.event.workflow_run.html_url }})
+            - **Ejecutado por**: ${{ github.actor }}
 
+      - name: Notify General Channel (Opcional)
+        uses: appleboy/discord-action@v1.2.0
+        with:
+          webhook_url: ${{ secrets.DISCORD_GENERAL_WEBHOOK }}
+          message: " ¡Hola equipo! Recuerden revisar los PRs y tests."
