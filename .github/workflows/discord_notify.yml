@@ -24,7 +24,6 @@ jobs:
             - **Autor**: ${{ github.actor }}
 
       - name: Notify Tests Channel (Workflows)
-        if: github.event_name == 'workflow_run'
         uses: appleboy/discord-action@v1.2.0
         with:
           webhook_url: ${{ secrets.URL_PRUEBAS_DISCORD }}
