@@ -44,4 +44,4 @@ jobs:
         uses: appleboy/discord-action@v1.2.0
         with:
           webhook_url: ${{ secrets.DISCORD_GENERAL_WEBHOOK }}
-          message: "¡Hola equipo! Se ha realizado una nueva acción en el repositorio."
+          message: "¡Hola equipo! Se ha realizado una nueva acción en el repositorio." 
