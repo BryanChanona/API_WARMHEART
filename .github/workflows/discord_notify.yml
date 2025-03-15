@@ -43,4 +43,4 @@ jobs:
         uses: appleboy/discord-action@v1.2.0
         with:
           webhook_url: ${{ secrets.DISCORD_GENERAL_WEBHOOK }}
-          message: " ¡Hola equipo! Recuerden revisar los PRs y tests."
+          message: " ¡Hola equipo! Recuerden revisar los PRs y tests."  
